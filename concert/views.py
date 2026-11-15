@@ -36,6 +36,8 @@ def remote_page(request, url, template, key):
         response = requests.get(url, timeout=10)
         response.raise_for_status()
         records = response.json()
+        if isinstance(records, dict) and key in records:
+            records = records[key]
     except (requests.RequestException, ValueError):
         return HttpResponse('The requested service is temporarily unavailable.', status=503)
     return render(request, template, {key: records if isinstance(records, list) else [records]})
